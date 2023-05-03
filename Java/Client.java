@@ -1,9 +1,16 @@
+import java.io.ObjectOutput;
+
 public class Client {
 
     /**
      * This method name and parameters must remain as-is
      */
     public static int add(int lhs, int rhs) {
+        // connect to server
+        // create an instance of the remote method class
+        RemoteMethod add = new RemoteMethod("add",  new Object[] {lhs, rhs});
+        // ObjectOutputStream to serialize the add instance
+        // ObjectOutputStream oos = new ObjectOutputStream();
         return -1;
     }
     /**

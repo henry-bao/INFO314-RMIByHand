@@ -1,4 +1,21 @@
+import java.net.ServerSocket;
+
 public class Server {
+    public static void main (String[] args) {
+        try {
+            ServerSocket server = new ServerSocket(10314);
+            // Read the bytes
+            // Deserialize the bytes using ObjectInputStream
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+
+        }
+    }
+
+
+
+
 
     // Do not modify any code below tihs line
     // --------------------------------------
