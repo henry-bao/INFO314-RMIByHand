@@ -1,29 +1,49 @@
-import java.io.ObjectOutput;
+import java.io.*;
+import java.net.*;
+
 
 public class Client {
+    private static final String HOST = "localhost";
 
     /**
      * This method name and parameters must remain as-is
      */
     public static int add(int lhs, int rhs) {
-        // connect to server
-        // create an instance of the remote method class
-        RemoteMethod add = new RemoteMethod("add",  new Object[] {lhs, rhs});
-        // ObjectOutputStream to serialize the add instance
-        // ObjectOutputStream oos = new ObjectOutputStream();
-        return -1;
+        return (int) callRemoteMethod("add", lhs, rhs);
     }
+
     /**
      * This method name and parameters must remain as-is
      */
     public static int divide(int num, int denom) {
-        return -1;
+        return (int) callRemoteMethod("divide", num, denom);
     }
+
     /**
      * This method name and parameters must remain as-is
      */
     public static String echo(String message) {
-        return "";
+        return (String) callRemoteMethod("echo", message);
+    }
+
+    private static Object callRemoteMethod(String methodName, Object... args) {
+        try (Socket socket = new Socket(HOST, PORT);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    
+            out.writeObject(new RemoteMethod(methodName, args));
+            Object result = in.readObject();
+    
+            if (result instanceof Throwable) {
+                throw (Throwable) result;
+            }
+            return result;
+        } catch (Throwable e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            return null;
+        }
     }
 
     // Do not modify any code below this line

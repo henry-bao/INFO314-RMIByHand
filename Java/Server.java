@@ -1,15 +1,44 @@
-import java.net.ServerSocket;
+import java.net.*;
+import java.io.*;
 
 public class Server {
-    public static void main (String[] args) {
-        try {
-            ServerSocket server = new ServerSocket(10314);
-            // Read the bytes
-            // Deserialize the bytes using ObjectInputStream
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(Client.PORT)) {
+            while (true) {
+                try (Socket socket = serverSocket.accept();
+                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
 
+                    RemoteMethod remoteMethod = (RemoteMethod) in.readObject();
+                    String methodName = remoteMethod.getMethodName();
+                    Object[] methodArgs = remoteMethod.getArgs();
+                    Object result;
+
+                    try {
+                        switch (methodName) {
+                            case "add":
+                                result = add((int) methodArgs[0], (int) methodArgs[1]);
+                                break;
+                            case "divide":
+                                result = divide((int) methodArgs[0], (int) methodArgs[1]);
+                                break;
+                            case "echo":
+                                result = echo((String) methodArgs[0]);
+                                break;
+                            default:
+                                throw new NoSuchMethodException("Method not found: " + methodName);
+                        }
+                    } catch (Throwable t) {
+                        result = t;
+                    }
+
+                    out.writeObject(result);
+                } catch (IOException | ClassNotFoundException e) {
+                    System.err.println("Error: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
         }
     }
 

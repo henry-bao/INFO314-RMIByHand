@@ -1,6 +1,6 @@
 import java.io.Serializable;
 
-public class RemoteMethod implements Serializable{
+public class RemoteMethod implements Serializable {
     private String methodName;
     private Object[] args;
 
@@ -16,4 +16,4 @@ public class RemoteMethod implements Serializable{
     public Object[] getArgs() {
         return args;
     }
-}  
+}
