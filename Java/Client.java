@@ -26,14 +26,18 @@ public class Client {
         return (String) callRemoteMethod("echo", message);
     }
 
+
+    // Helper function to call remote methods
     private static Object callRemoteMethod(String methodName, Object... args) {
         try (Socket socket = new Socket(HOST, PORT);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
     
+            // Send the method name and arguments to the server
             out.writeObject(new RemoteMethod(methodName, args));
             Object result = in.readObject();
     
+            // Check if the result is an exception
             if (result instanceof Throwable) {
                 throw (Throwable) result;
             }

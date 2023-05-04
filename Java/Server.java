@@ -6,14 +6,16 @@ public class Server {
         try (ServerSocket serverSocket = new ServerSocket(Client.PORT)) {
             while (true) {
                 try (Socket socket = serverSocket.accept();
-                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
 
+                    // Receive the remote method request from the client
                     RemoteMethod remoteMethod = (RemoteMethod) in.readObject();
                     String methodName = remoteMethod.getMethodName();
                     Object[] methodArgs = remoteMethod.getArgs();
                     Object result;
 
+                    // Execute the requested method and store the result
                     try {
                         switch (methodName) {
                             case "add":
@@ -29,9 +31,11 @@ public class Server {
                                 throw new NoSuchMethodException("Method not found: " + methodName);
                         }
                     } catch (Throwable t) {
+                        // If an exception occurs, store it as the result
                         result = t;
                     }
-
+                    
+                    // Send the result (or exception) back to the client
                     out.writeObject(result);
                 } catch (IOException | ClassNotFoundException e) {
                     System.err.println("Error: " + e.getMessage());
